@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>¡Menos sedentarismo, más movimiento!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap">
+<style>
+:root{
+  --bg:#F2F8FD; --ink:#0B2A4A; --muted:#44607C; --card:#FFFFFF; --celeste:#74ACDF; --sol:#F6B40E; --line:#CFE2F3;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#0B1B2E;--ink:#EAF3FB;--muted:#A9C0D6;--card:#12304F;--line:#24476C;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0B1B2E;--ink:#EAF3FB;--muted:#A9C0D6;--card:#12304F;--line:#24476C;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:18px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:0 20px 64px}
+section{padding:48px 0 0}
+h1{font-size:clamp(2.6rem,11vw,5rem);line-height:.95;font-weight:800;letter-spacing:-.03em;margin:40px 0 20px}
+h1 span{display:block;color:var(--celeste)}
+h2{font-size:1.7rem;line-height:1.15;font-weight:800;letter-spacing:-.02em;margin:0 0 14px}
+p{margin:0 0 14px;max-width:62ch}
+.lead{font-size:1.2rem;color:var(--muted)}
+.sol{background:var(--sol);color:#0B2A4A;display:inline-block;font-weight:800;padding:4px 12px;border-radius:999px;font-size:.95rem}
+
+/* contador */
+.meter{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:22px}
+.total{display:flex;align-items:baseline;gap:8px;font-weight:800}
+.total b{font-size:3.4rem;line-height:1;letter-spacing:-.03em}
+.bar{height:16px;border-radius:99px;background:var(--line);overflow:hidden;margin:12px 0 6px}
+.fill{height:100%;width:0;background:var(--celeste);border-radius:99px;transition:width .35s ease,background .35s ease}
+.fill.ok{background:var(--sol)}
+.msg{min-height:1.6em;font-weight:600;margin:0 0 14px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts button{font:inherit;text-align:left;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;line-height:1.25}
+.opts button small{display:block;color:var(--muted);font-weight:600}
+.opts button[aria-pressed="true"]{background:var(--celeste);border-color:var(--celeste);color:#0B2A4A}
+.opts button[aria-pressed="true"] small{color:#0B2A4A}
+.reset{margin-top:14px;font:inherit;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
+button:focus-visible,a:focus-visible{outline:3px solid var(--sol);outline-offset:2px}
+
+/* contenido */
+ul.plain{padding-left:20px;margin:0 0 14px}
+ul.plain li{margin-bottom:8px;max-width:62ch}
+.box{border-left:6px solid var(--celeste);padding:4px 0 4px 18px;margin:0 0 16px}
+.box p{margin:0}
+.src li{margin-bottom:10px}
+.src a{color:var(--ink)}
+footer{padding-top:48px;color:var(--muted);font-size:.95rem}
+@media (max-width:480px){.opts{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>¡Menos sedentarismo, <span>más movimiento!</span></h1>
+    <p class="lead">Cada movimiento cuenta. Si tenés entre 13 y 17 años, esta campaña es para vos.</p>
+    <p><span class="sol">Meta: 60 minutos por día</span></p>
+  </header>
+
+  <section aria-labelledby="t-contador">
+    <h2 id="t-contador">Armá tus 60 minutos</h2>
+    <p>Tocá lo que hiciste hoy y mirá cuánto sumás. Caminar, bailar y subir escaleras entran en la cuenta.</p>
+    <div class="meter">
+      <div class="total"><b id="min">0</b><span>de 60 min</span></div>
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="60" aria-valuenow="0" aria-label="Minutos de actividad"><div class="fill" id="fill"></div></div>
+      <p class="msg" id="msg" aria-live="polite">Todavía no sumaste nada. Arrancá con lo que quieras.</p>
+      <div class="opts" id="opts"></div>
+      <button class="reset" id="reset" type="button">Empezar de nuevo</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-que">
+    <h2 id="t-que">Qué es el sedentarismo</h2>
+    <p>Es pasar mucho tiempo sentado o recostado mientras estás despierto: en clase, en el celular, frente a la compu o la tele. No es lo mismo que no hacer deporte. Alguien puede entrenar y aun así pasar casi todo el resto del día sentado.</p>
+  </section>
+
+  <section aria-labelledby="t-oms">
+    <h2 id="t-oms">Lo que recomienda la OMS</h2>
+    <div class="box"><p>Los adolescentes deberían hacer, en promedio, 60 minutos por día de actividad física moderada a intensa.</p></div>
+    <ul class="plain">
+      <li>La mayor parte del tiempo, actividad aeróbica: caminar rápido, andar en bici, correr, nadar.</li>
+      <li>Al menos 3 días por semana, actividades intensas y de fortalecimiento de músculos y huesos, como saltar, jugar al vóley o hacer gimnasia.</li>
+      <li>Limitar el tiempo sedentario, sobre todo el que se pasa mirando pantallas por ocio.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="t-riesgos">
+    <h2 id="t-riesgos">Por qué importa</h2>
+    <p>La OMS relaciona el exceso de tiempo sentado en chicos y adolescentes con peor condición física, más grasa corporal, peor salud cardiometabólica y menos horas de sueño. Moverse, en cambio, mejora la condición física, la salud del corazón y los huesos, y también el bienestar mental y el rendimiento al estudiar.</p>
+  </section>
+
+  <section aria-labelledby="t-arg">
+    <h2 id="t-arg">Y en Argentina</h2>
+    <p>En 2022 el Gobierno argentino publicó la Encuesta sobre Deporte y Actividad Física en Niños, Niñas y Adolescentes, que estudió los hábitos deportivos de personas de entre 6 y 17 años. Es un buen punto de partida para ver cómo nos movemos acá.</p>
+  </section>
+
+  <section aria-labelledby="t-tips">
+    <h2 id="t-tips">Cómo cortar el sedentarismo</h2>
+    <ul class="plain">
+      <li>Levantate cada tanto: estirate, caminá un poco, tomá agua parada.</li>
+      <li>Si podés, andá al colegio caminando o en bici.</li>
+      <li>Invitá a tus amigos a jugar en vez de juntarse a mirar pantallas.</li>
+      <li>Elegí una actividad que te guste. Si te divierte, la vas a repetir.</li>
+      <li>Escaleras mejor que ascensor.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="t-fuentes">
+    <h2 id="t-fuentes">Fuentes</h2>
+    <ul class="plain src">
+      <li>Organización Mundial de la Salud (OMS). <a href="https://www.who.int/publications/i/item/9789240015128" target="_blank" rel="noopener">Directrices de la OMS sobre actividad física y comportamiento sedentario</a>.</li>
+      <li>Gobierno de la República Argentina. Encuesta sobre Deporte y Actividad Física en Niños, Niñas y Adolescentes (2022).</li>
+    </ul>
+  </section>
+
+  <footer>Campaña escolar de Educación Física. ¡Cada movimiento cuenta!</footer>
+</main>
+
+<script>
+(function(){
+  var items=[
+    {n:"Caminar al colegio",m:15},
+    {n:"Andar en bici",m:20},
+    {n:"Fútbol, vóley o básquet",m:30},
+    {n:"Bailar",m:15},
+    {n:"Subir escaleras",m:5},
+    {n:"Saltar la soga o gimnasia",m:10}
+  ];
+  var opts=document.getElementById("opts"),minEl=document.getElementById("min"),fill=document.getElementById("fill"),
+      msg=document.getElementById("msg"),bar=document.querySelector(".bar");
+  items.forEach(function(it){
+    var b=document.createElement("button");
+    b.type="button";b.setAttribute("aria-pressed","false");b.dataset.m=it.m;
+    b.innerHTML=it.n+"<small>"+it.m+" min</small>";
+    b.addEventListener("click",function(){
+      b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")==="true"?"false":"true");
+      update();
+    });
+    opts.appendChild(b);
+  });
+  function update(){
+    var t=0;
+    opts.querySelectorAll("button[aria-pressed=true]").forEach(function(b){t+=+b.dataset.m});
+    minEl.textContent=t;
+    fill.style.width=Math.min(100,t/60*100)+"%";
+    fill.classList.toggle("ok",t>=60);
+    bar.setAttribute("aria-valuenow",Math.min(60,t));
+    msg.textContent=t===0?"Todavía no sumaste nada. Arrancá con lo que quieras.":
+      t>=60?"¡Llegaste a los 60 minutos! Cada movimiento cuenta.":
+      "Te faltan "+(60-t)+" min. Sumá otro movimiento.";
+  }
+  document.getElementById("reset").addEventListener("click",function(){
+    opts.querySelectorAll("button").forEach(function(b){b.setAttribute("aria-pressed","false")});
+    update();
+  });
+
+})();
+</script>
+</body>
+</html>
